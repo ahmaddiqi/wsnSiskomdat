@@ -77,4 +77,5 @@ void receiveData(){
       jumlah_data--;
   }
   
+  }
 }
