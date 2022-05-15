@@ -1,12 +1,24 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
+//add ds18b20 library
+#include <OneWire.h>
+#include <DallasTemperature.h>
+// Data wire is plugged into port 2 on the Arduino
+#define ONE_WIRE_BUS 2
+
+// Setup a oneWire instance to communicate with any OneWire devices (not just Maxim/Dallas temperature ICs)
+OneWire oneWire(ONE_WIRE_BUS);
+
+// Pass our oneWire reference to Dallas Temperature. 
+DallasTemperature sensorSuhu(&oneWire);
+
 struct sensor_data {
   float suhu;
   float o2;
   float ph;
   byte priority;
-}kumpulan_data[99]; 
+  }kumpulan_data[99]; 
 /*
 asumsikan maks 99 data struct, setiap data 4bytes float + 4bytes float 02 + 4bytes float 03 + 1byte priority = 13 bytes
 13*99 = 1399 bytes digunakan untuk struct
@@ -26,6 +38,7 @@ void setup()
 {
 	setupnrf();
   Serial.begin(115200);
+  sensorSuhu.begin();
 }
 
 void loop()
@@ -41,13 +54,14 @@ void setupnrf() {
 }
 
 int decisionTreeAlgorithm(float suhu, float o2, float ph) {
-    return 3;
+    return 0;
 }
 
 void baca_sensor() {
-  float suhu = 0;
-  float o2 = 0;
-  float ph = 0;
+  sensors.requestTemperatures();
+  float suhu = sensors.getTempCByIndex(0);
+  float o2 = random(0,100); //buat data random
+  float ph = random(0,14);
   byte priority = decisionTreeAlgorithm(suhu, o2, ph);
   jumlah_data++;
   kumpulan_data[jumlah_data].suhu = suhu;
